@@ -54,7 +54,7 @@ Variables
   z                Minimizacion
   d(i,j)           Distancia entre el nodo i al nodo j;
 
-Binary Variable x;
+Positive variable x;
 
 
 
@@ -77,13 +77,11 @@ restriccion_oferta2(m)      ..      sum(p,y2(m,p)) =l= O2(m);
 nodos_intermedios(m,p)      ..      sum((i,j), x(i,j,m,p)) - sum((i,j), x(j,i,m,p)) =e= 0;
 
 
-
-
 Model Modelo1 /all/ ;
 
 
-option mip=CPLEX
-Solve Modelo1 using mip minimizing z;
+option nlp=CONOPT
+Solve Modelo1 using nlp minimizing z;
 
 Display x.l;
 Display y1.l;
