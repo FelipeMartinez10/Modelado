@@ -3,6 +3,10 @@ Sets
      c coordenadas /x, y/
 alias(i,j);
 
+Parameter posX(i) posicion en x del nodo /n1 1, n2 2, n3 2, n4 4, n5 5, n6 6, n7 6, n8 7, n9 7, n10 8, n11 8, n12 9,n13 9,n14 10 ,n15 10,n16 11,n17 11,n18 12,n19 12,n20 13,n21 13,n22 14,n23 14,n24 15,n25 15,n26 16,n27 1/;
+Parameter posY(i) posicion en x del nodo /n1 3, n2 4, n3 6, n4 7, n5 3, n6 3, n7 5, n8 3, n9 8, n10 6, n11 8, n12 7,n13 1,n14 5 ,n15 2,n16 9,n17 7,n18 4,n19 10,n20 1,n21 10,n22 2,n23 5,n24 7,n25 6,n26 9,n27 15/;
+
+$ontext
 Table ubis(i,c) ubicaciones por nodo
          x       y
 n1       1       3
@@ -35,6 +39,18 @@ n27      1      15;
 
 Parameter u(i,c) ubicaciones;
          u(i,c) = ubis(i,c);
+$offtext
+
+Parameter distancia(i,j) distancia entre dos nodos: costo del enlace
+loop ((i,j),
+         if(ord(i) eq ord(j),
+                 distancia(i,j) = 999;
+         else
+                 distancia(i,j)=sqrt(sqr(posX(i)-posX(j))+sqr(posY(i)-posY(j)));
+                 distancia(i,j)=ifthen(distancia(i,j)>7.5,999,distancia(i,j));
+         );
+)
+
 
 Variables
 *  x(i,j,m,p)       1 si se usa el arco (i j) para ir de m a p 0 si no se utiliza.
@@ -55,10 +71,10 @@ Fun_Obj               Funcion Objetivo
 *restriccion_oferta2(m)   Restriccion de oferta y2
 *nodos_intermedios        Restriccion nodos intermedios
 *restriccion_altura       Restriccion de altura
-Distancia(i,j)           Matriz de distancias
+*DistanciaC(i,j)           Matriz de distancias
 ;
 
-Distancia(i,j)              ..      d(i,j) =e= sqrt(sqr(u(i, 'x') - u(j, 'x')) + sqr(u(i, 'y') - u(j, 'y')));
+*Distancia(i,j)              ..      d(i,j) =e= sqrt(sqr(u(i, 'x') - u(j, 'x')) + sqr(u(i, 'y') - u(j, 'y')));
 Fun_Obj                     ..      z =e= sum((i,j), d(i,j));
 *restriccion_demanda1(p)     ..      sum(m,y1(m,p)) =e= D1(p);
 *restriccion_demanda2(p)     ..      sum(m,y2(m,p)) =e= D2(p);
@@ -77,4 +93,3 @@ Solve Modelo1 using mip minimizing z;
 
 
 Display z.l;
-
