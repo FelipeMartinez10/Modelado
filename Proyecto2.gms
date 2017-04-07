@@ -38,13 +38,22 @@ n27      1      15;
 Parameter u(i,c) ubicaciones;
          u(i,c) = ubis(i,c);
 
+parameter D1(p) demanda de drones mensajeros en nodos destino
+         /n6 50/;
+parameter D2(p) demanda de drones fotografos en nodos destino
+         /n6 50/;
+parameter O1(m) oferta de drones mensajeros en nodos fuente
+         /n7 35, n16 5, n24 10/;
+parameter O2(m) oferta de drones fotografos en nodos fuente
+         /n7 21, n16 9, n24 20/;
+
 Variables
   x(i,j,m,p)       1 si se usa el arco (i j) para ir de m a p 0 si no se utiliza.
   y1(m,p)          Cantidad de drones mensajeros que se envian de m a p
   y2(m,p)          Cantidad de drones fotografos que se envian de m a p
-  z                maximizacion 
+  z                Minimizacion
   d(i,j)           Distancia entre el nodo i al nodo j;
-  
+
 Binary Variable x;
 
 
@@ -56,12 +65,11 @@ restriccion_demanda2(p)  Restriccion de demanda y2
 restriccion_oferta1(m)   Restriccion de oferta y1
 restriccion_oferta2(m)   Restriccion de oferta y2
 nodos_intermedios        Restriccion nodos intermedios
-restriccion_altura       Restriccion de altura
 Distancia(i,j)           Matriz de distancias
 ;
 
 Distancia(i,j)              ..      d(i,j) =e= sqrt(sqr(u(i, 'x') - u(j, 'x')) + sqr(u(i, 'y') - u(j, 'y')));
-Fun_Obj(m)                  ..      z =e= sum(p,(2*sum((i,j), x(i,j,m,p)*C(i,j)*(y1(m,p) + y2(m,p));
+Fun_Obj(m)                  ..      z =e= sum(p,(2*sum((i,j), x(i,j,m,p)*d(i,j)*(y1(m,p) + y2(m,p)))));
 restriccion_demanda1(p)     ..      sum(m,y1(m,p)) =e= D1(p);
 restriccion_demanda2(p)     ..      sum(m,y2(m,p)) =e= D2(p);
 restriccion_oferta1(m)      ..      sum(p,y1(m,p)) =l= O1(m);
