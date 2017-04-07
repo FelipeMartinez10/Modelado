@@ -1,10 +1,11 @@
 Sets
      i   nodos   / n1 * n27/
-     m   nodos fuente    /n1/
-     p   nodos destino   /n7/
+     m(i)   nodos fuente    /n7, n16, n24/
+     p(i)   nodos destino   /n6/
+     c coordenadas /x, y/
 alias(i,j);
 
-Table ubis(i,j) ubicaciones por nodo
+Table ubis(i,c) ubicaciones por nodo
          x       y
 n1       1       3
 n2       2       4
@@ -34,8 +35,8 @@ n25     16       6
 n26     19       9
 n27      1      15;
 
-Parameter u(i,j) ubicaciones;
-         u(i,j) = ubis(i,j);
+Parameter u(i,c) ubicaciones;
+         u(i,c) = ubis(i,c);
 
 Variables
   x(i,j,m,p)       1 si se usa el arco (i j) para ir de m a p 0 si no se utiliza.
