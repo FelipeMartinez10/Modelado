@@ -30,12 +30,8 @@ Fun_Obj                 ..      z =e= sum(m,(sum(p,(2*sum((i,j), x(i,j,m,p)*C(i,
 
 Model Modelo1 /all/ ;
 
-*option dnlp=CONOPT
-*option dnlp=MINOS
-*option dnlp=SNOPT
+
 option mip=CPLEX
-*option iterlim = 50000
-*option profiletol = 1.0E-2
 Solve Modelo1 using mip minimizing z;
 
 Display x.l;
