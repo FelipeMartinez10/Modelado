@@ -15,15 +15,21 @@ Binary Variable x;
 
 
 Equations
-Fun_Obj(m)                  Funcion Objetivo
-nodos_origen             Nodos Origen
-nodos_destino            Nodos Destino
+Fun_Obj(m)               Funcion Objetivo
+restriccion_demanda1(p)  Restriccion de demanda y1
+restriccion_demanda2(p)  Restriccion de demanda y2
+restriccion_oferta1(m)   Restriccion de oferta y1
+restriccion_oferta2(m)   Restriccion de oferta y2
 nodos_intermedios        Restriccion nodos intermedios
+restriccion_altura       Restriccion de altura
 ;
 
-Fun_Obj(m)                 ..      z =e= sum(p,(2*sum((i,j), x(i,j,m,p)*C(i,j)*(y1(m,p) + y2(m,p));
-
-
+Fun_Obj(m)                  ..      z =e= sum(p,(2*sum((i,j), x(i,j,m,p)*C(i,j)*(y1(m,p) + y2(m,p));
+restriccion_demanda1(p)     ..      sum(m,y1(m,p)) =e= D1(p);
+restriccion_demanda2(p)     ..      sum(m,y2(m,p)) =e= D2(p);
+restriccion_oferta1(m)      ..      sum(p,y1(m,p)) =l= O1(m);
+restriccion_oferta2(m)      ..      sum(p,y2(m,p)) =l= O2(m);
+nodos_intermedios(m,p)      ..      sum((i,j), x(i,j,m,p)) - sum((i,j), x(j,i,m,p)) =e= 0;
 
 
 
