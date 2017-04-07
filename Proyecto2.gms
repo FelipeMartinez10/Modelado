@@ -15,13 +15,13 @@ Binary Variable x;
 
 
 Equations
-Fun_Obj                  Funcion Objetivo
+Fun_Obj(m)                  Funcion Objetivo
 nodos_origen             Nodos Origen
 nodos_destino            Nodos Destino
 nodos_intermedios        Restriccion nodos intermedios
 ;
 
-Fun_Obj                 ..      z =e= sum(m,(sum(p,(2*sum((i,j), x(i,j,m,p)*C(i,j)*(y1(m,p) + y2(m,p)))));
+Fun_Obj(m)                 ..      z =e= sum(p,(2*sum((i,j), x(i,j,m,p)*C(i,j)*(y1(m,p) + y2(m,p));
 
 
 
