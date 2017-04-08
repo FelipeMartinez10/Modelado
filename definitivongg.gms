@@ -2,8 +2,10 @@ Sets
      i   nodos                   /n1 * n15/
      m(i)   nodos fuente         /n7/
      p(i)   nodos destino        /n6/
+     k(i) nodos intermedios      /n1,n2,n3,n4,n5,n8,n9,n10,n11,n12,n13,n14,n15/
      c coordenadas               /x, y/
 alias(i,j);
+alias(k,l);
 
 Table ubis(i,c) ubicaciones por nodo
          x       y
@@ -52,13 +54,17 @@ Parameter dist_max distancia máxima en km que puede recorrer el dron /7.5/;
 
 Parameter alt_min altura mínima a la que debe volar el dron /50/;
 
-parameter D1(p) demanda de drones mensajeros en nodos destino
+Parameter cant_m cantidad de origenes /1/
+
+Parameter cant_p cantidad de destinos /1/
+
+Parameter D1(p) demanda de drones mensajeros en nodos destino
          /n6 50/;
-parameter D2(p) demanda de drones fotografos en nodos destino
+Parameter D2(p) demanda de drones fotografos en nodos destino
          /n6 50/;
-parameter O1(m) oferta de drones mensajeros en nodos fuente
+Parameter O1(m) oferta de drones mensajeros en nodos fuente
          /n7 50/;
-parameter O2(m) oferta de drones fotografos en nodos fuente
+Parameter O2(m) oferta de drones fotografos en nodos fuente
          /n7 50/;
 
 Variables
@@ -66,8 +72,7 @@ Variables
   y1(m,p)          Cantidad de drones mensajeros que se envian de m a p
   y2(m,p)          Cantidad de drones fotografos que se envian de m a p
   z                Minimizacion;
-
-Positive variable x;
+Binary variable x;
 
 
 
@@ -77,24 +82,26 @@ restriccion_demanda1(p)  Restriccion de demanda y1
 restriccion_demanda2(p)  Restriccion de demanda y2
 restriccion_oferta1(m)   Restriccion de oferta y1
 restriccion_oferta2(m)   Restriccion de oferta y2
-nodos_intermedios        Restriccion nodos intermedios
+nodos_origen(m)          Restriccion de los nodos oringen
+nodos_destino(p)         Restriccion de los nodos destino
+nodos_intermedios(m,p)   Restriccion nodos intermedios
 alturas(i,j,m,p)         Restriccion de la altura
 ;
 
 Fun_Obj                     ..      z =e= sum((p,m),(2*sum((i,j), x(i,j,m,p)*d(i,j)*(y1(m,p) + y2(m,p)))));
-restriccion_demanda1(p)     ..      sum(m,y1(m,p)) =e= D1(p);
-restriccion_demanda2(p)     ..      sum(m,y2(m,p)) =e= D2(p);
-restriccion_oferta1(m)      ..      sum(p,y1(m,p)) =l= O1(m);
-restriccion_oferta2(m)      ..      sum(p,y2(m,p)) =l= O2(m);
-nodos_intermedios(m,p)      ..      sum((i,j), x(i,j,m,p)) - sum((i,j), x(j,i,m,p)) =e= 0;
+restriccion_demanda1(p)     ..      sum((m),y1(m,p)) =e= D1(p);
+restriccion_demanda2(p)     ..      sum((m),y2(m,p)) =e= D2(p);
+restriccion_oferta1(m)      ..      sum((p),y1(m,p)) =l= O1(m);
+restriccion_oferta2(m)      ..      sum((p),y2(m,p)) =l= O2(m);
+nodos_origen(m)             ..      sum((i,j,p), x(i,j,m,p)) =e= cant_m;
+nodos_destino(p)            ..      sum((i,j,m), x(i,j,m,p)) =e= cant_p;
+nodos_intermedios(m,p)      ..      sum((k,l), x(k,l,m,p)) - sum((k,l), x(l,k,m,p)) =e= 0;
 alturas(i,j,m,p)            ..      x(i,j,m,p)*d(i,j) =l= (dist_max * (alt_min/a(i,j)));
 
-
 Model Modelo1 /all/ ;
-
-
-option nlp=CONOPT
-Solve Modelo1 using nlp minimizing z;
+                                  
+option  minlp=BARON
+Solve Modelo1 using minlp minimizing z;
 
 Display x.l;
 Display y1.l;
