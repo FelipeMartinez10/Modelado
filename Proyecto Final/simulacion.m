@@ -1,4 +1,4 @@
-function [sM, sF, iM, iF, fM, fF, satM, satF] = simulacion(nodesCoordinates,matrizDeCostos, m, f, maxM, maxF )
+function [sM, sF, iM, iF, fM, fF, satM, satF, t] = simulacion(nodesCoordinates,matrizDeCostos, m, f, maxM, maxF )
 % SIMULADOR DE EVENTOS DISCRETOS
 fprintf('Iniciando simulacion con %d drones mensajeros y %d drones fotografos para %d misiones de mensajeria y %d misiones de fotografia \n', m,f,maxM,maxF);
 % Inicializacion de variables
