@@ -1,7 +1,6 @@
-function [ iM, iF, fM, fF] = Simulacion(nodesCoordinates,matrLinks, m, f, maxM, maxF )
-%SIMULACION Summary of this function goes here
-%   Detailed explanation goes here
-%% SIMULADOR DE EVENTOS DISCRETOS
+function [sM, sF, iM, iF, fM, fF, satM, satF] = simulacion(nodesCoordinates,matrizDeCostos, m, f, maxM, maxF )
+% SIMULADOR DE EVENTOS DISCRETOS
+fprintf('Iniciando simulacion con %d drones mensajeros y %d drones fotografos para %d misiones de mensajeria y %d misiones de fotografia \n', m,f,maxM,maxF);
 % Inicializacion de variables
 solicitudesMensajeria = 0;
 solicitudesFotografia = 0;
@@ -13,8 +12,10 @@ mensajeros = m;
 fotografos = f;
 maximoFotografia = maxF;
 maximoMensajeria = maxM;
+saturadoFotografia = 0;
+saturadoMensajeria = 0;
 % El conjunto de nodos origen
-origenes = [14];
+origenes = [14 21];
 % Inicialización del tiempo de simulación
 t=0;
 % Programacion del evento inicial Fotografo
@@ -72,6 +73,8 @@ while length(evtQueue)>0 && (solicitudesMensajeria < maximoMensajeria || solicit
               newEvt.type = 'Fotografo B';
               newEvt.r = 0;
               evtQueue = [evtQueue newEvt];
+           else
+              saturadoFotografia = 1; 
            end
            %Se crea otro evento A
            origen = origenes(unidrnd(length(origenes)));
@@ -95,7 +98,7 @@ while length(evtQueue)>0 && (solicitudesMensajeria < maximoMensajeria || solicit
         %Se resta al numero de drones mensajeros disponibles
         fotografos = fotografos - 1;
         %Se calcula la ruta a seguir y el tiempo que va a demorar
-        [sp, spcost, P]=dijkstra_v2(matrLinks, evt.s, evt.d);
+        [sp, spcost, P]=dijkstra_v2(matrizDeCostos, evt.s, evt.d);
         %Se crea el evento c
         newEvt.type = 'Fotografo C';
         tiempo = spcost/30;
@@ -140,6 +143,8 @@ while length(evtQueue)>0 && (solicitudesMensajeria < maximoMensajeria || solicit
               newEvt.type = 'Mensajero B';
               newEvt.r = 0;
               evtQueue = [evtQueue newEvt];
+           else
+              saturadoMensajeria = 1; 
            end
            %Se crea otro evento A
            origen = origenes(unidrnd(length(origenes)));
@@ -163,7 +168,7 @@ while length(evtQueue)>0 && (solicitudesMensajeria < maximoMensajeria || solicit
         %Se resta al numero de drones mensajeros disponibles
         mensajeros = mensajeros - 1;
         %Se calcula la ruta a seguir y el tiempo que va a demorar
-        [sp, spcost, P]=dijkstra_v2(matrLinks, evt.s, evt.d);
+        [sp, spcost, P]=dijkstra_v2(matrizDeCostos, evt.s, evt.d);
         %Se crea el evento c
         newEvt.type = 'Mensajero C';
         tiempo = spcost/30;
@@ -208,19 +213,15 @@ while length(evtQueue)>0 && (solicitudesMensajeria < maximoMensajeria || solicit
             end
         end
     end
-%     Mostrado de la cola de eventos:
-    fprintf('\nCola de eventos:\n');
-    for i=1:length(evtQueue)
-        fprintf('Evento %s en t=%f\n',evtQueue(i).type,evtQueue(i).t);
-    end
-    fprintf('----------------\n');
-    %pause;
+
 end
 
+sM = solicitudesMensajeria;
+sF = solicitudesFotografia;
 iM = iniciadasMensajeria;
 iF = iniciadasFotografia;
 fM = terminadasMensajeria;
 fF = terminadasFotografia;
-
+satF = saturadoFotografia;
+satM = saturadoMensajeria;
 end
-
