@@ -19,6 +19,7 @@ nodesCoordinates(25,1)=16; nodesCoordinates(25,2)=6; nodesCoordinates(26,1)=19; 
 nodesCoordinates(27,1)=1; nodesCoordinates(27,2)=12;
 
 RC = 7.5; % Radio de cobertura
+h = figure;
 min_x = 0;
 max_x = 20;
 min_y = 0;
@@ -65,7 +66,7 @@ for i=1:length(nodesCoordinates)
                 
                 matrLinks(i,j)=1;
                 
-                line([nodesCoordinates(i,1), nodesCoordinates(j,1)], [nodesCoordinates(i,2), nodesCoordinates(j,2)],'LineStyle',':', 'Color','k', 'LineWidth',1);
+                line([nodesCoordinates(i,1), nodesCoordinates(j,1)], [nodesCoordinates(i,2), nodesCoordinates(j,2)], 'Color','m', 'LineWidth',1);
                 hold on;
             else
                 matrLinks(i,j)=inf;
@@ -82,12 +83,12 @@ for i=1:length(nodesCoordinates)
         else
             plot(nodesCoordinates(i,1), nodesCoordinates(i,2), 'o', 'LineWidth',1,'MarkerEdgeColor','k', 'MarkerFaceColor','k', 'MarkerSize',7);            
         end
-        text(x+1, y+0.5, num2str(i), 'FontSize',8, 'FontWeight', 'bold', 'Color','k');
+        text(x+0.2, y+0.2, num2str(i), 'FontSize',8, 'FontWeight', 'bold', 'Color','k');
         %title('Red Celular')
         % axis([0 110 0 60])
 end
 
-
+saveas(h, 'grafo.jpg');
 
 
 %% SIMULADOR DE EVENTOS DISCRETOS
@@ -98,8 +99,8 @@ iniciadasMensajeria = 0;
 iniciadasFotografia = 0;
 terminadasMensajeria = 0;
 terminadasFotografia = 0;
-mensajeros = 5;
-fotografos = 10;
+mensajeros = 3;
+fotografos = 3;
 maximoFotografia = 100;
 maximoMensajeria = 100;
 % El conjunto de nodos origen
@@ -117,7 +118,7 @@ while destino == origen
    destino = unidrnd(length(nodesCoordinates)); 
 end
 evt.d = destino;
-evt.t = unidrnd(15-5+1)+(5-1);
+evt.t = unidrnd(150-30+1)+(30-1);
 evt.type = 'Fotografo A';
 evt.r = 0;
 % Programacion en la cola de eventos
@@ -135,14 +136,14 @@ while destino == origen
    destino = unidrnd(length(nodesCoordinates)); 
 end
 evt.d = destino;
-evt.t = unidrnd(15-5+1)+(5-1);
+evt.t = unidrnd(75-20+1)+(20-1);
 evt.type = 'Mensajero A';
 evt.r = 0;
 % Programacion en la cola de eventos
 evtQueue = [evtQueue evt];
 
 % Core de la simulacion
-while length(evtQueue)>0 && (iniciadasMensajeria < maximoMensajeria || iniciadasFotografia < maximoFotografia)
+while length(evtQueue)>0 && (solicitudesMensajeria < maximoMensajeria || solicitudesFotografia < maximoFotografia)
     evt=evtQueue(1); 
     evtQueue(1)=[];
     
@@ -150,7 +151,7 @@ while length(evtQueue)>0 && (iniciadasMensajeria < maximoMensajeria || iniciadas
     
     % Procesamiento del evento A: solicitud de mision para drone mensajero
     if evt.type=='Fotografo A'
-        if iniciadasFotografia < maximoFotografia
+        if solicitudesFotografia < maximoFotografia
            %Se suma a las misiones de drone mensajero solicitadas
            solicitudesFotografia = solicitudesFotografia + 1;
            %Si hay disponibilidad, se envia el drone (evento B)
@@ -188,7 +189,7 @@ while length(evtQueue)>0 && (iniciadasMensajeria < maximoMensajeria || iniciadas
         %Se crea el evento c
         newEvt.type = 'Fotografo C';
         tiempo = spcost/30;
-        newEvt.t = t + tiempo;
+        newEvt.t = t + tiempo + 150;
         newEvt.s = evt.s;
         newEvt.d = evt.d;        
         newEvt.r = length(sp);
@@ -201,7 +202,7 @@ while length(evtQueue)>0 && (iniciadasMensajeria < maximoMensajeria || iniciadas
        %Se suma al numero de misiones completadas
        terminadasFotografia = terminadasFotografia + 1;
        %Se calcula el tiempo de carga o cambio de baterias, antes de poder viajar de nuevo
-       carga = evt.r*15;
+       carga = evt.r*20;
        %Se crea el evento d
        newEvt.s = evt.s;
        newEvt.d = evt.d;
@@ -218,7 +219,7 @@ while length(evtQueue)>0 && (iniciadasMensajeria < maximoMensajeria || iniciadas
     
     % Procesamiento del evento A: solicitud de mision para drone mensajero
     if evt.type=='Mensajero A'
-        if iniciadasMensajeria < maximoMensajeria
+        if solicitudesMensajeria < maximoMensajeria
            %Se suma a las misiones de drone mensajero solicitadas
            solicitudesMensajeria = solicitudesMensajeria + 1;
            %Si hay disponibilidad, se envia el drone (evento B)
@@ -256,7 +257,7 @@ while length(evtQueue)>0 && (iniciadasMensajeria < maximoMensajeria || iniciadas
         %Se crea el evento c
         newEvt.type = 'Mensajero C';
         tiempo = spcost/30;
-        newEvt.t = t + tiempo;
+        newEvt.t = t + tiempo + 60;
         newEvt.s = evt.s;
         newEvt.d = evt.d;        
         newEvt.r = length(sp);
@@ -268,7 +269,7 @@ while length(evtQueue)>0 && (iniciadasMensajeria < maximoMensajeria || iniciadas
        %Se suma al numero de misiones completadas
        terminadasMensajeria = terminadasMensajeria + 1;
        %Se calcula el tiempo de carga o cambio de baterias, antes de poder viajar de nuevo
-       carga = evt.r*15;
+       carga = evt.r*20;
        %Se crea el evento d
        newEvt.s = evt.s;
        newEvt.d = evt.d;
